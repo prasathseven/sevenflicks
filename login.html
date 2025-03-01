@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Seven Flicks</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script> 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <style>
+        /* Background */
+        body {
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container-fluid {
+            flex: 1; 
+        }
+
+        /* Login Box */
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .card {
+            padding: 40px;
+            border-radius: 12px;
+        }
+
+        /* Input & Button Styling */
+        .form-control {
+            height: 50px;
+            font-size: 18px;
+            border-radius: 8px;
+        }
+
+        .btn-login {
+            background: #ff7e5f;
+            color: white;
+            border: none;
+            height: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover {
+            background: #feb47b;
+        }
+
+        /* Google Sign-In Button */
+        .g_id_signin {
+            display: flex;
+            justify-content: center;
+        }
+
+        .navbar-nav {
+            width: 100%;
+            justify-content: center;
+        }
+
+        footer {
+            margin-top: auto;
+        }
+
+        /* Error Message */
+        .error-msg {
+            color: red;
+            font-size: 16px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="bg-dark text-white text-center py-3">
+        <h1 class="fw-bold">Seven Flicks Photography</h1>
+    </header>
+
+    <!-- Navigation Bar (Unchanged) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="book-session.php">Book a Session</a></li>
+                    <li class="nav-item"><a class="nav-link" href="quote.html">Get a Quote</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="login.html">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="partner.html">Our Partners</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="logout.php">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid d-flex align-items-center justify-content-center">
+        <div class="login-container">
+            <h2 class="text-center mb-4">Login</h2>
+
+            <!-- Error Message -->
+            <p class="text-center error-msg" id="error-msg"></p>
+
+            <form id="login-form" action="login.php" method="POST">
+                <div class="form-floating mb-3">
+                    <input type="email" id="email" name="email" class="form-control" required placeholder="Enter Email">
+                    <label for="email">Email Address</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" id="password" name="password" class="form-control" required placeholder="Enter Password">
+                    <label for="password">Password</label>
+                </div>
+
+                <button type="submit" class="btn btn-login w-100">Login</button>
+            </form>
+
+            <!-- Google Sign-In -->
+            <div id="g_id_onload"
+                 data-client_id="1035288999394-3ssefqki293crmjuumbqcc28cmiaup0p.apps.googleusercontent.com"
+                 data-callback="handleCredentialResponse">
+            </div>
+            <div class="g_id_signin mt-3" data-type="standard"></div>
+
+            <!-- Sign Up & Forgot Password -->
+            <div class="text-center mt-3">
+                <p>Don't have an account? <a href="signup.html" class="text-decoration-none">Sign Up</a></p>
+                <p><a href="#" class="text-decoration-none">Forgot Password?</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p class="mb-0">&copy; 2025 Seven Flicks Photography. All rights reserved.</p>
+    </footer>
+    <script>
+        document.getElementById("login-form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+        
+            let formData = new FormData(this);
+        
+            fetch("login.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    window.location.href = data.redirect; // Redirect user
+                } else {
+                    document.getElementById("error-msg").innerText = data.message;
+                    document.getElementById("error-msg").style.display = "block"; // Show error message
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+        </script>
+      
+</body>
+</html>
